@@ -109,9 +109,10 @@ class Reseau:
         return s
 
     def mutate(self, taux:float, proba_change:float):
-        for i in range(len(self.layers)):
+        n = len(self.layers)
+        for i in range(n):
             for j in range(len(self.layers[i].inputs)):
-                off, a, b, c = binomial(1,proba_change,4)*normal(0,taux, 4)
+                off, a, b, c = binomial(1,proba_change/(i+1),4)*normal(0,taux/(i+1), 4)
                 self.layers[i].modify_offset(off*len(self.layer_zero))
                 self.change_param(i, j, a, b, c)
 

@@ -22,7 +22,7 @@ def analyse(val, bit_boost, valshield):
 # la fonction deplacement() modifie en place la case 6 = orientation de chaque pod
 # la fonction deplacement() modifie en place les cases 4 et 5 = vitesse de chaque pod
 # la fonction deplacement() modifie en place les cases 2 et 3 = position de chaque pod
-def deplacement(lpod, premierTour, boost_1, boost_2):
+def deplacement(lpod, premierTour, boost_1, boost_2, nb_rebond):
     orientation = []
     nv_vx = []
     nv_vy = []
@@ -56,6 +56,8 @@ def deplacement(lpod, premierTour, boost_1, boost_2):
 
     dt = 1/parametre.nombre_de_dt
 
+    rebond = False
+
     for loop in range(parametre.nombre_de_dt):
         for i in range(4):
             nv_x[i] += nv_vx[i] * dt
@@ -64,6 +66,7 @@ def deplacement(lpod, premierTour, boost_1, boost_2):
 
                 if parametre.collision_activee(i,j) and (nv_x[i]-nv_x[j])**2 + (nv_y[i]-nv_y[j])**2 < 800**2: # 800 est le diamètre d'un pod
                     
+                    rebond = True
                     angle_collision = angle(nv_x[j]-nv_x[i], nv_y[j]-nv_y[i])
 
                     angle_vi = angle(nv_vx[i], nv_vy[i]) - angle_collision
@@ -122,7 +125,7 @@ def deplacement(lpod, premierTour, boost_1, boost_2):
         pod[3] = nv_y[indice]
 
         # Modifications en place
-    return boost_1, boost_2
+    return boost_1, boost_2, nb_rebond + (1 if rebond else 0)
 
 # Valide le passage d'un cp et actualise le prochain cp d'un pod
 def cp_valide(lpod, carte_cp, cp_avant_tp, entrainement_atq):
@@ -139,12 +142,12 @@ def cp_valide(lpod, carte_cp, cp_avant_tp, entrainement_atq):
             # téléportation pour l'entrainement avec défense 
             if entrainement_atq:
                 if i==0 and (pod[0]*len(carte_cp) + pod[1])%cp_avant_tp == cp_avant_tp - 1:
-                    lpod[3][0][2], lpod[3][0][3] = carte_cp[pod[1]][0], carte_cp[pod[1]][1]
-                    lpod[3][0][4], lpod[3][0][5] = 0, 
+                    lpod[3][0][2], lpod[3][0][3] = carte_cp[pod[1]][0] + parametre.placement_entrainement_defense_tp_x, carte_cp[pod[1]][1] + parametre.placement_entrainement_defense_tp_y
+                    lpod[3][0][4], lpod[3][0][5] = 0, 0
                     lpod[3][0][6] = randint(-180, 180)
             else:
                 if i==2 and (pod[0]*len(carte_cp) + pod[1])%cp_avant_tp == cp_avant_tp - 1:
-                    lpod[1][0][2], lpod[1][0][3] = carte_cp[pod[1]][0], carte_cp[pod[1]][1]
+                    lpod[1][0][2], lpod[1][0][3] = carte_cp[pod[1]][0] + parametre.placement_entrainement_defense_tp_x, carte_cp[pod[1]][1] + parametre.placement_entrainement_defense_tp_y
                     lpod[1][0][4], lpod[1][0][5] = 0, 0
                     lpod[1][0][6] = randint(-180, 180)
 
@@ -189,6 +192,7 @@ def jeu(carte_cp, nb_tour, reponse_j1, reponse_j2, parametres, nombre_de_course 
     pods = pods_start(carte_cp, nombre_de_course)
 
     memoire = [[] for _ in pods]
+    nb_rebond = [0 for _ in pods]
 
     premier_tour = True
 
@@ -208,7 +212,7 @@ def jeu(carte_cp, nb_tour, reponse_j1, reponse_j2, parametres, nombre_de_course 
                 # la fonction deplacement() modifie en place les cases 4 et 5 = vitesse de chaque pod
                 # la fonction deplacement() modifie en place les cases 2 et 3 = position de chaque pod
 
-                boost_j1, boost_j2 = deplacement(lpod, premier_tour, boost_j1, boost_j2) 
+                boost_j1, boost_j2, nb_rebond[i] = deplacement(lpod, premier_tour, boost_j1, boost_j2, nb_rebond[i]) 
 
 
                 cp_valide(lpod, carte_cp, cp_avant_teleportation, entrainement_attaque) # modifie en place les cases 0 (nb de tour) 1 (prochain cp) et 7 (nb de tour sans passer de cp) de chaque pod
@@ -227,4 +231,4 @@ def jeu(carte_cp, nb_tour, reponse_j1, reponse_j2, parametres, nombre_de_course 
         premier_tour = False
     
 
-    return memoire
+    return memoire, nb_rebond

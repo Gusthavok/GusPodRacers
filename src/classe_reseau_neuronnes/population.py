@@ -94,11 +94,11 @@ class Population:
             opponent = self.opponents[randint(0, len(self.opponents))]
             rsx = [(indiv, opponent) for indiv in self.individus]
 
-            mem = jeu(carte, parametre.nombre_de_tour, self.type_bot_hero, self.type_bot_vilain, rsx, nombre_de_course=nb_courses, cp_avant_teleportation=self.cp_avant_tp, entrainement_attaque=self.type_attaque)
+            mem, nb_rebond = jeu(carte, parametre.nombre_de_tour, self.type_bot_hero, self.type_bot_vilain, rsx, nombre_de_course=nb_courses, cp_avant_teleportation=self.cp_avant_tp, entrainement_attaque=self.type_attaque)
 
             for i, l in enumerate(mem):
                 (pod_j1_a, pod_j1_b, pod_j2_a, pod_j2_b) = l[-1]
-                self.score[i]+= self.fonction_score(carte, pod_j1_a, pod_j1_b, pod_j2_a, pod_j2_b) / parametre.nombre_de_carte_pour_score
+                self.score[i]+= self.fonction_score(carte, pod_j1_a, pod_j1_b, pod_j2_a, pod_j2_b, nb_rebond[i]) / parametre.nombre_de_carte_pour_score
 
     def reload(self, population_name:str, new_inputs:list, new_nodes:int, aleat:float = 0.1, integre_meilleurs:bool = False):
         if len(self.individus)>0:
@@ -162,7 +162,7 @@ class Population:
 
             meilleur = argmax(self.score)
 
-            mem = jeu(carte, nb_tour, self.type_bot_hero, self.type_bot_vilain, [(self.individus[meilleur], self.opponents[randint(0, len(self.opponents))])], nombre_de_course=1, cp_avant_teleportation=self.cp_avant_tp, entrainement_attaque = self.type_attaque)
+            mem, nb_rebond = jeu(carte, nb_tour, self.type_bot_hero, self.type_bot_vilain, [(self.individus[meilleur], self.opponents[randint(0, len(self.opponents))])], nombre_de_course=1, cp_avant_teleportation=self.cp_avant_tp, entrainement_attaque = self.type_attaque)
 
             exemple = mem[0]
 
