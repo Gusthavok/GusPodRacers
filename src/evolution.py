@@ -4,7 +4,7 @@ from console_et_robots.bots_ancien import reponse_ancien_bot
 import entrainement.parametre as parametre
 from console_et_robots.calcul_angle import norme
 from math import sqrt
-
+ 
 # Fonctions score attaque : il faudrait diviser le score par un score de référence. Comme ca il est pas ultra félicité sil réussit vite des courses rapides
 def score_attaque_carre(carte, pod_j1_a, pod_j1_b, pod_j2_a, pod_j2_b, nb_rebond):
     return (pod_j1_a[0]*len(carte) + pod_j1_a[1] - min(1,(norme(pod_j1_a[2]-carte[pod_j1_a[1]][0], pod_j1_a[3]-carte[pod_j1_a[1]][1]))/norme(carte[(pod_j1_a[1]-1)%len(carte)][0]-carte[pod_j1_a[1]][0], carte[(pod_j1_a[1]-1)%len(carte)][1]-carte[pod_j1_a[1]][1])))**2 
@@ -149,33 +149,33 @@ def evolution_globale_phase_1():
     suite_apprentissage_defense = [
         ### apprentissage des techniques de bases de défense : 
         ([
-        #(200, 80, 15, 15, 1/1,  1/4,  1/2,  1/2,  3,  200,  10),  # 2  inputs - 0 noeuds intermediaire
-        #(200, 80, 15, 15, 1/1,  1/4,  1/2,  1/2,  3,  200,  10), # 2  inputs - 1 noeuds intermediaire
-        #(200, 70, 10, 10, 1/2,  1/8,  1/3,  1/4,  10, 500,  10), # 4  inputs - 2 noeuds intermediaire
-        #(200, 70, 10, 10, 1/2,  1/8,  1/4,  1/4,  10, 1000, 10), # 4  inputs - 3 noeuds intermediaire
-        #(300, 70, 10, 10, 1/2,  1/12, 1/5,  1/8,  10, 1500, 20), # 8  inputs - 3 noeuds intermediaire
-        #(200, 70, 10, 10, 1/2,  1/16, 1/7, 1/12,  15, 2000, 10), # 8  inputs - 4 noeuds intermédiaire
-        #(200, 60, 10, 10, 1/3,  1/20, 1/9, 1/12,  15, 2500, 20),  # 8  inputs - 5 noeuds intermédiaires
+        (200, 80, 15, 15, 1/1,  1/4,  1/2,  1/2,  3,  200,  10),  # 2  inputs - 0 noeuds intermediaire
+        (200, 80, 15, 15, 1/1,  1/4,  1/2,  1/2,  3,  200,  10), # 2  inputs - 1 noeuds intermediaire
+        (200, 70, 10, 10, 1/2,  1/8,  1/3,  1/4,  10, 500,  10), # 4  inputs - 2 noeuds intermediaire
+        (200, 70, 10, 10, 1/2,  1/8,  1/4,  1/4,  10, 1000, 10), # 4  inputs - 3 noeuds intermediaire
+        (300, 70, 10, 10, 1/2,  1/12, 1/5,  1/8,  10, 1500, 20), # 8  inputs - 3 noeuds intermediaire
+        (200, 70, 10, 10, 1/2,  1/16, 1/7, 1/12,  15, 2000, 10), # 8  inputs - 4 noeuds intermédiaire
+        (200, 60, 10, 10, 1/3,  1/20, 1/9, 1/12,  15, 2500, 20),  # 8  inputs - 5 noeuds intermédiaires
     ], [
-        #(["angle adversaire", "distance adversaire"],               0, bot_defense_2,  bot_attaque_4, score_defense, 1),
-        #([],                                                        1, bot_defense_2,  bot_attaque_4, score_defense, 1), 
-        #(["angle CP", "distance CP"],                               0, bot_defense_4,  bot_attaque_4, score_defense, 1), 
-        #([],                                                        1, bot_defense_4,  bot_attaque_4, score_defense, 1), 
-        #(["angle vitesse adversaire", "norme vitesse adversaire", 
-        #  "angle vitesse hero",       "norme vitesse hero"       ], 0, bot_defense_8,  bot_attaque_4, score_defense, 1), 
-        #([],                                                        1, bot_defense_8,  bot_attaque_4, score_defense, 1), 
-        #([],                                                        1, bot_defense_8,  bot_attaque_4, score_defense, 1),
+        (["angle adversaire", "distance adversaire"],               0, bot_defense_2,  bot_attaque_4, score_defense, 1),
+        ([],                                                        1, bot_defense_2,  bot_attaque_4, score_defense, 1), 
+        (["angle CP", "distance CP"],                               0, bot_defense_4,  bot_attaque_4, score_defense, 1), 
+        ([],                                                        1, bot_defense_4,  bot_attaque_4, score_defense, 1), 
+        (["angle vitesse adversaire", "norme vitesse adversaire", 
+          "angle vitesse hero",       "norme vitesse hero"       ], 0, bot_defense_8,  bot_attaque_4, score_defense, 1), 
+        ([],                                                        1, bot_defense_8,  bot_attaque_4, score_defense, 1), 
+        ([],                                                        1, bot_defense_8,  bot_attaque_4, score_defense, 1),
     ]), 
 
         ### réponse à un bot compététant en attaque
         ([
-            #(200, 70, 10, 10, 1/2,  1/30, 1/5,  1/12,  10, 2500, 20), # 10 inputs - 5 noeuds intermédiaires
-            #(200, 70, 10, 10, 1/2,  1/40, 1/7, 1/15,  15, 2500, 10),  # 10 inputs - 6 noeuds intermédiaires
-            #(200, 60, 10, 10, 1/3,  1/50, 1/9, 1/20,  15, 2500, 10)   # 10 inputs - 7 noeuds intermédiaires
+            (200, 70, 10, 10, 1/2,  1/30, 1/5,  1/12,  10, 2500, 20), # 10 inputs - 5 noeuds intermédiaires
+            (200, 70, 10, 10, 1/2,  1/40, 1/7, 1/15,  15, 2500, 10),  # 10 inputs - 6 noeuds intermédiaires
+            (200, 60, 10, 10, 1/3,  1/50, 1/9, 1/20,  15, 2500, 10)   # 10 inputs - 7 noeuds intermédiaires
         ], [
-            #(["angle CP+1", "distance CP+1"],  0, bot_defense_10,  bot_attaque_8_bis, score_defense, 2), 
-            #([],                               1, bot_defense_10,  bot_attaque_8_bis, score_defense, 2), 
-            #([],                               1, bot_defense_10,  bot_attaque_8_bis, score_defense, 2)
+            (["angle CP+1", "distance CP+1"],  0, bot_defense_10,  bot_attaque_8_bis, score_defense, 2), 
+            ([],                               1, bot_defense_10,  bot_attaque_8_bis, score_defense, 2), 
+            ([],                               1, bot_defense_10,  bot_attaque_8_bis, score_defense, 2)
         ]), 
 
         ### succession d'entrainement anodin en réponse successive aux apprentissage de l'attaque
@@ -221,15 +221,15 @@ def evolution_globale_phase_1():
     suite_apprentissage_attaque = [
     ## Apprentissage de l'attaque face a un défenseur
         ([
-            #(200, 80, 15, 15, 1,  1/10,  1/4,  1/20,  5,  2500, 20),
-            #(200, 80, 15, 15, 1,  1/10,  1/4,  1/20,  10, 2500, 25),  
-            #(200, 80, 15, 15, 1,  1/10,  1/4,  1/20,  15, 2500, 30), 
-            #(200, 70, 10, 10, 1,  1/10,  1/4,  1/20,  20, 2500, 40)
+            (200, 80, 15, 15, 1,  1/10,  1/4,  1/20,  5,  2500, 20),
+            (200, 80, 15, 15, 1,  1/10,  1/4,  1/20,  10, 2500, 25),  
+            (200, 80, 15, 15, 1,  1/10,  1/4,  1/20,  15, 2500, 30), 
+            (200, 70, 10, 10, 1,  1/10,  1/4,  1/20,  20, 2500, 40)
         ], [
-            #(["angle adversaire", "distance adversaire"],        0, bot_attaque_6_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2),
-            #(["vitesse adversaire", "angle vitesse adversaire"], 0, bot_attaque_8_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2), 
-            #([],                                                 1, bot_attaque_8_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2), 
-            #([],                                                 1, bot_attaque_8_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2)
+            (["angle adversaire", "distance adversaire"],        0, bot_attaque_6_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2),
+            (["vitesse adversaire", "angle vitesse adversaire"], 0, bot_attaque_8_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2), 
+            ([],                                                 1, bot_attaque_8_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2), 
+            ([],                                                 1, bot_attaque_8_bis,  bot_defense_8, score_attaque_racine_debute_defense, 2)
         ]), 
 
     ## apprentissage successif de réponse à un défenseur expérimenté
@@ -279,11 +279,11 @@ def evolution_globale_phase_1():
     if len(suite_apprentissage_attaque) != len(suite_apprentissage_defense):
         raise ValueError("Pas autant de phase d'apprentissage de défense que de phase d'apprentissage de l'attaque")
     
-    #fichier_recuperation_defense = "/PAS DE FICHIER/"
-    #fichier_recuperation_defense = "Phase_1-defense subphase-0"
-    #fichier_recuperation_attaque = "Phase_0"
-    fichier_recuperation_defense = "Phase_1-defense subphase-4"
-    fichier_recuperation_attaque = "Phase_1-attaque subphase-4"
+    fichier_recuperation_defense = "/PAS DE FICHIER/"
+    fichier_recuperation_attaque = "Phase_0"
+    #fichier_recuperation_defense = "Phase_1-defense subphase-4"
+    #fichier_recuperation_attaque = "Phase_1-attaque subphase-4"
+
     nom_fichier_defense = "Phase_1-defense subphase-"
     nom_fichier_attaque = "Phase_1-attaque subphase-"
 
@@ -304,7 +304,7 @@ def evolution_globale_phase_1():
         pop_def = Population('adv', False, bot_defense_10, exit_bot, [Reseau()], score_defense)
         pop_def.reload(fichier_recuperation_defense, [], 0, integre_meilleurs=False)
 
-        if False and indice<=1: # la population 0 corespond à un bot de défense de type 8 inputs, ceux d'aprés sont des 10 inputs
+        if indice<=1: # la population 0 corespond à un bot de défense de type 8 inputs, ceux d'aprés sont des 10 inputs
             liste_defenseurs = [pop_def.get_meilleur()]
         else:
             liste_defenseurs.append(pop_def.get_meilleur())
@@ -321,7 +321,7 @@ def evolution_globale_phase_1():
         # on rajoute le nouveau défenseur à la liste des défenseurs
         pop_atq = Population('adv', True, bot_attaque_8_bis, exit_bot, [Reseau()], score_attaque)
         pop_atq.reload(fichier_recuperation_attaque, [], 0, integre_meilleurs=False)
-        if False and indice==0: # la population initiale corespond à un bot d'attaque de type 8 inputs, ceux d'aprés sont des 12 inputs
+        if indice==0: # la population initiale corespond à un bot d'attaque de type 8 inputs, ceux d'aprés sont des 12 inputs
             liste_attaquants = [pop_atq.get_meilleur()]
         else:
             liste_attaquants.append(pop_atq.get_meilleur())
@@ -399,15 +399,15 @@ def comparer_attaque(nom_fichier_j1, type_bot_j1, nom_fichier_j2, type_bot_j2, f
     populace.afficher_meilleur(nombe_de_carte)
 
 
-#evolution_globale_phase_0()
+evolution_globale_phase_0()
 evolution_globale_phase_1()
 
 ## Pour observer une map
 #set_parametres_phase_0_statique()
-set_parametres_phase_1_statique()
-parametre.taille_cp = 600
-parametre.set_placement_entrainement_defense(1000)
-comparer_attaque("phase_1_save/second try/Phase_1-defense subphase-5", bot_defense_10, "phase_1_save/second try/Phase_1-attaque subphase-5", bot_attaque_8_bis,  score_attaque_racine, nombe_de_carte = 10, cp_avant_tp=2)
+#set_parametres_phase_1_statique()
+#parametre.taille_cp = 600
+#parametre.set_placement_entrainement_defense(1000)
+#comparer_attaque("models/phase_1_save/second try/Phase_1-defense subphase-5", bot_defense_10, "models/phase_1_save/second try/Phase_1-attaque subphase-5", bot_attaque_8_bis,  score_attaque_racine, nombe_de_carte = 10, cp_avant_tp=2)
 #observer_vs_ancien_code("phase_0_save/phase_0 save_6", bot_attaque_8, score_attaque_racine, nombe_de_carte = 10)
 
 ## Pour lancer l'entrainement
