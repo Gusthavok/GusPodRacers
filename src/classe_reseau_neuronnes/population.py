@@ -9,7 +9,7 @@ import operator
 
 # RMQ : C'est moche d'importer ici reduction factor, il vaudrait surement mieux de gérer tout l'affichage du cote de visualisation_graphique.py
 class Population:
-    def __init__(self, name:str, type_attaque:bool, type_bot_hero, type_bot_vilain, opponents_networks:list[Reseau], fonction_score, individus:list[Reseau] = [], meilleurs_anciennes_generations:list[Reseau] = [], score:list = [], anciens_score:list = [], cp_avant_tp = 100) -> None:
+    def __init__(self, name:str, type_attaque:int, type_bot_hero, type_bot_vilain, opponents_networks:list[Reseau], fonction_score, individus:list[Reseau] = [], meilleurs_anciennes_generations:list[Reseau] = [], score:list = [], anciens_score:list = [], cp_avant_tp = 100) -> None:
         # ATTENTION, ON FAIT UNE COPIE DE LA LISTE individus, SI CETTE DERNIERE EST NON VIDE, LES POINTEURS QU'ELLE CONTIENT SONT EGAUX
         # meme chose pour la liste des reseaux de l'opponent
         

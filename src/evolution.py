@@ -287,7 +287,7 @@ def evolution_globale_phase_1():
     nom_fichier_defense = "Phase_1-defense subphase-"
     nom_fichier_attaque = "Phase_1-attaque subphase-"
 
-    pop_atq = Population('adv', True, bot_attaque_4, exit_bot, [Reseau()], score_attaque)
+    pop_atq = Population('adv', 1, bot_attaque_4, exit_bot, [Reseau()], score_attaque)
     pop_atq.reload(fichier_recuperation_attaque, [], 0, integre_meilleurs=False)
     liste_attaquants.append(pop_atq.get_meilleur())
 
@@ -301,7 +301,7 @@ def evolution_globale_phase_1():
         fichier_recuperation_defense = fichier_depos_defense
         
         # on rajoute le nouveau défenseur à la liste des défenseurs
-        pop_def = Population('adv', False, bot_defense_10, exit_bot, [Reseau()], score_defense)
+        pop_def = Population('adv', -1, bot_defense_10, exit_bot, [Reseau()], score_defense)
         pop_def.reload(fichier_recuperation_defense, [], 0, integre_meilleurs=False)
 
         if indice<=1: # la population 0 corespond à un bot de défense de type 8 inputs, ceux d'aprés sont des 10 inputs
@@ -319,7 +319,7 @@ def evolution_globale_phase_1():
         fichier_recuperation_attaque = fichier_depos_attaque
         
         # on rajoute le nouveau défenseur à la liste des défenseurs
-        pop_atq = Population('adv', True, bot_attaque_8_bis, exit_bot, [Reseau()], score_attaque)
+        pop_atq = Population('adv', 1, bot_attaque_8_bis, exit_bot, [Reseau()], score_attaque)
         pop_atq.reload(fichier_recuperation_attaque, [], 0, integre_meilleurs=False)
         if indice==0: # la population initiale corespond à un bot d'attaque de type 8 inputs, ceux d'aprés sont des 12 inputs
             liste_attaquants = [pop_atq.get_meilleur()]
@@ -382,18 +382,18 @@ def evolution(inputs:list, nombre_de_noeuds_intermediaire:int, bot_j1, bot_j2, f
 
 def observer_vs_ancien_code(nom_fichier, type_bot_j1, fonction_score, nombe_de_carte = 3, timing_frame = 50):
     parametre.timing_frame = timing_frame
-    populace = Population('poubelle', True, type_bot_j1, reponse_ancien_bot, [Reseau()], fonction_score, cp_avant_tp = 2)
+    populace = Population('poubelle', 1, type_bot_j1, reponse_ancien_bot, [Reseau()], fonction_score, cp_avant_tp = 2)
     populace.reload(nom_fichier, [], 0, integre_meilleurs=False)
     populace.afficher_meilleur(nombe_de_carte)
 
 def comparer_attaque(nom_fichier_j1, type_bot_j1, nom_fichier_j2, type_bot_j2, fonction_score, nombe_de_carte = 3, timing_frame = 50, cp_avant_tp = 2):
     parametre.timing_frame = timing_frame
 
-    pops2 = Population('j2', True, type_bot_j2, type_bot_j1, [Reseau()], fonction_score)
+    pops2 = Population('j2', 1, type_bot_j2, type_bot_j1, [Reseau()], fonction_score)
     pops2.reload(nom_fichier_j2, [], 0, integre_meilleurs=False)
     meilleur_j2 = pops2.get_meilleur()
 
-    populace = Population('j1', False, type_bot_j1, type_bot_j2, [meilleur_j2], fonction_score, cp_avant_tp = cp_avant_tp)
+    populace = Population('j1', -1, type_bot_j1, type_bot_j2, [meilleur_j2], fonction_score, cp_avant_tp = cp_avant_tp)
     populace.reload(nom_fichier_j1, [], 0, integre_meilleurs=False)
 
     populace.afficher_meilleur(nombe_de_carte)
@@ -404,22 +404,22 @@ evolution_globale_phase_1()
 
 ## Pour observer une map
 #set_parametres_phase_0_statique()
-#set_parametres_phase_1_statique()
-#parametre.taille_cp = 600
-#parametre.set_placement_entrainement_defense(1000)
-#comparer_attaque("models/phase_1_save/second try/Phase_1-defense subphase-5", bot_defense_10, "models/phase_1_save/second try/Phase_1-attaque subphase-5", bot_attaque_8_bis,  score_attaque_racine, nombe_de_carte = 10, cp_avant_tp=2)
+set_parametres_phase_1_statique()
+parametre.taille_cp = 600
+parametre.set_placement_entrainement_defense(1000)
+comparer_attaque("models/phase_1_save/second try/Phase_1-defense subphase-5", bot_defense_10, "models/phase_1_save/second try/Phase_1-attaque subphase-5", bot_attaque_8_bis,  score_attaque_racine, nombe_de_carte = 10, cp_avant_tp=2)
 #observer_vs_ancien_code("phase_0_save/phase_0 save_6", bot_attaque_8, score_attaque_racine, nombe_de_carte = 10)
 
 ## Pour lancer l'entrainement
 
 #evolution_globale_phase_0()
 
-#pop_adv = Population('adv', True, bot_attaque_8, exit_bot, [Reseau()], score_attaque)
+#pop_adv = Population('adv', 1, bot_attaque_8, exit_bot, [Reseau()], score_attaque)
 #pop_adv.reload("phase_0_save/phase_0 save_6", [], 0, integre_meilleurs=False)
 #meilleur_adv = pop_adv.get_meilleur()
 #evolution_globale_phase_1_defense([meilleur_adv])
 
-#pop_adv = Population('adv', False, bot_attaque_8, exit_bot, [Reseau()], score_attaque)
+#pop_adv = Population('adv', -1, bot_attaque_8, exit_bot, [Reseau()], score_attaque)
 #pop_adv.reload("phase_1_save/Phase_1_defense save_2", [], 0, integre_meilleurs=False)
 #meilleur_adv = pop_adv.get_meilleur()
 #evolution_globale_phase_1_attaque([meilleur_adv])

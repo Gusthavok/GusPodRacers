@@ -140,12 +140,12 @@ def cp_valide(lpod, carte_cp, cp_avant_tp, entrainement_atq):
             pod[7] = 0
 
             # téléportation pour l'entrainement avec défense 
-            if entrainement_atq:
+            if entrainement_atq==1:
                 if i==0 and (pod[0]*len(carte_cp) + pod[1])%cp_avant_tp == cp_avant_tp - 1:
                     lpod[3][0][2], lpod[3][0][3] = carte_cp[pod[1]][0] + parametre.placement_entrainement_defense_tp_x, carte_cp[pod[1]][1] + parametre.placement_entrainement_defense_tp_y
                     lpod[3][0][4], lpod[3][0][5] = 0, 0
                     lpod[3][0][6] = randint(-180, 180)
-            else:
+            elif entrainement_atq==-1:
                 if i==2 and (pod[0]*len(carte_cp) + pod[1])%cp_avant_tp == cp_avant_tp - 1:
                     lpod[1][0][2], lpod[1][0][3] = carte_cp[pod[1]][0] + parametre.placement_entrainement_defense_tp_x, carte_cp[pod[1]][1] + parametre.placement_entrainement_defense_tp_y
                     lpod[1][0][4], lpod[1][0][5] = 0, 0
@@ -186,7 +186,7 @@ def pods_start(carte, nombre_de_course):
         True) for _ in range(nombre_de_course)]
     
 ####### FONCTION DE JEU
-def jeu(carte_cp, nb_tour, reponse_j1, reponse_j2, parametres, nombre_de_course = 1, cp_avant_teleportation = 100, entrainement_attaque = True):
+def jeu(carte_cp, nb_tour, reponse_j1, reponse_j2, parametres, nombre_de_course = 1, cp_avant_teleportation = 100, entrainement_attaque = 1):
     # cp_avant_teleportation signifie qu'au bout du nombre de cp indiqués, le pod_b_2 est téléporté au cp+1 de l'adversaire
 
     pods = pods_start(carte_cp, nombre_de_course)

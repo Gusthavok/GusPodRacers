@@ -1,18 +1,21 @@
 from classe_reseau_neuronnes.nodes import*
-from numpy.random import uniform, binomial, normal
+from numpy.random import uniform, binomial, normal, randint
 
 class Reseau:
-    def __init__(self, layer_zero:list=[], layers:list=[], atq:bool = True):
+    def __init__(self, layer_zero:list=[], layers:list=[], atq:int = 1):
         self.layer_zero = layer_zero.copy() # il s'agit des inputs du réseau
         self.layers = layers.copy() # il s'agit des noeuds du réseau. Les deux derniers donnent vitesse angle
-        self.attaque=atq
+        self.attaque=atq # 1 correspond à attaque, -1 à défense, 0 à général
 
-    def initialisation_aleatoire(self, inputs:list, nombre_de_noeuds_intermediaire:int):
+    def initialisation_aleatoire(self, inputs:list, nombre_de_noeuds_intermediaire:int): 
         
+        if self.attaque == 0:
+            raise ValueError("Attention : Un réseau global est initialisé aléatoirement")
+
         for input_name in inputs:
             self.add_input(input_name)
         
-        nb_dep = nombre_de_noeuds_intermediaire + (2 if self.attaque else 3) # deux noeuds de sortie dans le cas d'un Pod d'attaque, 3 sinon
+        nb_dep = nombre_de_noeuds_intermediaire + (2 if (self.attaque==1) else 3) # deux noeuds de sortie dans le cas d'un Pod d'attaque, 3 sinon
 
         for j in range(nb_dep):
             self.add_node(0, offset = uniform(-1,1,1)[0]*len(inputs))
@@ -40,11 +43,22 @@ class Reseau:
         for node in self.layers:
             node.calc_output()
         
-        if self.attaque:
+        if self.attaque==1:
             return min(1, max(-1, self.layers[-2].output)), min(1, max(0, self.layers[-1].output))
-        else:
+        elif self.attaque==-1:
             return min(1, max(-1, self.layers[-3].output)), min(1, max(0, self.layers[-2].output)), min(1, max(-1, self.layers[-1].output))
-    
+        else:
+            return (
+                min(1, max(-1, self.layers[-8].output)), # angle pod 1 
+                min(1, max(0, self.layers[-7].output)), # puissance pod 1
+                min(1, max(0, self.layers[-6].output)), # utilisation du shield ? 
+                min(1, max(0, self.layers[-5].output)), # utilisation du boost ?
+                min(1, max(-1, self.layers[-2].output)), # angle pod 2
+                min(1, max(0, self.layers[-1].output)), # puissance pod 2
+                min(1, max(0, self.layers[-2].output)), # utilisation du shield ?
+                min(1, max(0, self.layers[-1].output)) # utilisation du boost ?
+            )
+        
     def add_node(self, index, l_inputs = [], l_params = [], offset = 0):
         n = Node(index, l_inputs, l_params, offset)
         for noeud in self.layers[index:len(self.layers)]:
@@ -116,6 +130,23 @@ class Reseau:
                 self.layers[i].modify_offset(off*len(self.layer_zero))
                 self.change_param(i, j, a, b, c)
 
+
+    # def new_node(self, portion_inputs_selectionnes:float):
+    #     n = len(self.layers)
+    #     i =  randint(0, n)
+    #     l = []
+    #     while len(l)==0:
+    #         for j in range(len(self.layers[i].inputs)):
+    #             if uniform(0.0, 1.0) < portion_inputs_selectionnes:
+    #                 l.append(j)
+        
+    #     self.add_node(i)
+        
+    #     for j in l:
+
+
+                        
+
     def __str__(self):
         str_r =  "------------------ RESEAU DE NEURONE ------------------\n\n\n"
 
@@ -133,7 +164,7 @@ class Reseau:
 
         return str_r
 
-def decompress(s:str, attaque:bool = True):
+def decompress(s:str, attaque:bool = 1):
     l = s.split('\n')
 
     lay_z = []
@@ -162,7 +193,7 @@ def decompress(s:str, attaque:bool = True):
 
     return copie
 
-def evolve_network(s:str, new_inputs:list = [], new_nodes:int = 0, aleat:float = 0.1, type_attaque = True):
+def evolve_network(s:str, new_inputs:list = [], new_nodes:int = 0, aleat:float = 0.1, type_attaque = 1):
     # Reload un reseau en lui rajoutant des paramètres
 
     ntw = decompress(s, attaque=type_attaque)
