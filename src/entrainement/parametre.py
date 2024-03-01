@@ -5,6 +5,21 @@ from math import pi, sin, cos
 reduction_factor = 20
 timing_frame = 50
 
+
+## Pods 
+def inputs_attaque_utilise(l:list):
+    return l[:4] + l[8:12]
+
+def inputs_defense_utilise(l:list):
+    return l[:10]
+
+shield_active_attaquant = False
+boost_active_attaquant = False
+
+shield_active_defenseur = True
+boost_active_defenseur = True
+
+
 ## Paramtre console de jeu
 # Collisions
 collision_tab = [
@@ -29,14 +44,18 @@ defaite_j1_possible = True
 
 ## evolution
 nombre_de_generations = 5
-placement_entrainement_defense_tp_x = 0
-placement_entrainement_defense_tp_y = 0
+placement_entrainement_defense_tp_x = [0 for _ in range(8)] # au plus 8 cp par carte
+placement_entrainement_defense_tp_y = [0 for _ in range(8)]
+orientation_defense_tp = [0 for _ in range(8)]
+cp_tp = 0
 def set_placement_entrainement_defense(rayon):
-    global placement_entrainement_defense_tp_x, placement_entrainement_defense_tp_y
-    r = randint(rayon//2, rayon)
-    ang = randint(-180, 180)
-    placement_entrainement_defense_tp_x = r * cos(ang/180*pi)
-    placement_entrainement_defense_tp_y = r * sin(ang/180*pi)
+    global placement_entrainement_defense_tp_x, placement_entrainement_defense_tp_y, orientation_defense_tp
+    for i in range(8):
+        r = randint(rayon//2, rayon)
+        ang = randint(-180, 180)
+        placement_entrainement_defense_tp_x[i] = r * cos(ang/180*pi)
+        placement_entrainement_defense_tp_y[i] = r * sin(ang/180*pi)
+        orientation_defense_tp[i] = randint(-179, 181)
 
 ## Parametres Population
 # Reproduction : 

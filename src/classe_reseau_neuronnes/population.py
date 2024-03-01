@@ -87,6 +87,7 @@ class Population:
 
     def calculate_score(self):
         self.score = [0 for _ in self.individus]
+        score_max_global = 0
         for _ in range(parametre.nombre_de_carte_pour_score):
             carte = parametre.lcarte[randint(0, len(parametre.lcarte))]
             nb_courses = len(self.individus)
@@ -96,10 +97,28 @@ class Population:
 
             mem, nb_rebond = jeu(carte, parametre.nombre_de_tour, self.type_bot_hero, self.type_bot_vilain, rsx, nombre_de_course=nb_courses, cp_avant_teleportation=self.cp_avant_tp, entrainement_attaque=self.type_attaque)
 
+            sc = []
             for i, l in enumerate(mem):
                 (pod_j1_a, pod_j1_b, pod_j2_a, pod_j2_b) = l[-1]
-                self.score[i]+= self.fonction_score(carte, pod_j1_a, pod_j1_b, pod_j2_a, pod_j2_b, nb_rebond[i]) / parametre.nombre_de_carte_pour_score
+                sc.append(self.fonction_score(carte, pod_j1_a, pod_j1_b, pod_j2_a, pod_j2_b, nb_rebond[i]))
+            
+            max_sc = max(sc)
+            score_max_global += max_sc
+            if self.type_attaque == 1:
+                for i in range(len(self.individus)):
+                    self.score[i]+= (sc[i]/max_sc)/ parametre.nombre_de_carte_pour_score
+            elif self.type_attaque == -1:
+                for i in range(len(self.individus)):
+                    self.score[i]+= sc[i]/parametre.nombre_de_carte_pour_score
+            else:
+                print("Et la fonction score bgeww ?")
 
+        if self.type_attaque == 1:
+            for i in range(len(self.individus)):
+                self.score[i]*=(10+score_max_global/parametre.nombre_de_carte_pour_score)
+        
+
+            
     def reload(self, population_name:str, new_inputs:list, new_nodes:int, aleat:float = 0.1, integre_meilleurs:bool = False):
         if len(self.individus)>0:
             print("Attention, des pods sont reloads dans une population non vide")
@@ -174,3 +193,29 @@ class Population:
             for x,y in carte:
                 carte_cp_reduite.append((x/parametre.reduction_factor, y/parametre.reduction_factor))
             affgame(carte_cp_reduite, lpod1)
+
+    def ajoute_noeud_fin(self): # utlile pour une transfarmation d'une population une fois singulière
+        for ntw in self.individus:
+            n = len(ntw.layers)
+            ntw.add_node(n)
+            for i in range(len(ntw.layer_zero)):
+                ntw.add_input_in_node(n, -i-1)
+            for i in range(n):
+                ntw.add_input_in_node(n, i)
+        
+        for ntw, _ in self.meilleurs_anciennes_generations:
+            n = len(ntw.layers)
+            ntw.add_node(n)
+            for i in range(len(ntw.layer_zero)):
+                ntw.add_input_in_node(n, -i-1)
+            for i in range(n):
+                ntw.add_input_in_node(n, i)
+
+def f():
+    pass
+
+def update_population_attaque(fichier_ancien:str, fichier_nouveau:str):
+    pops = Population(fichier_nouveau, 1, f, f, [Reseau()], f)
+    pops.reload(fichier_ancien, [], 0, integre_meilleurs=True)
+    pops.ajoute_noeud_fin()
+    pops.save()

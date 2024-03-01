@@ -5,6 +5,7 @@ class Node:
         self.offset = offset
         self.index = index
         self.output = 0
+        self.age = 0
 
     def calc_output(self):
         somme = self.offset
@@ -19,7 +20,6 @@ class Node:
         for n in self.inputs:
             if n is noeud:
                 est_present = True
-                print(n)
         if not est_present:
             self.inputs.append(noeud)
             self.params.append((param_a, param_b, param_c))
@@ -36,11 +36,14 @@ class Node:
     def modify_offset(self, new_offset):
         self.offset+=new_offset
 
-    def incr_index(self):
-        self.index+=1
+    def incr_index(self, value = 1):
+        self.index+=value
 
+    def incr_age(self):
+        self.age+=1
+    
     def __str__(self):
-        str_n = "### Noeud " + str(self.index) + " ###\nOffset : "+ str(self.offset)+ "\nInputs : \n"
+        str_n = "### Noeud " + str(self.index) + " ###\nAge : " + str(self.age) + "\nOffset : "+ str(self.offset)+ "\nInputs : \n"
         for i, noeud in enumerate(self.inputs):
             str_n += "Noeud " + str(noeud.index) + " / params : " + str(self.params[i][0]) +" "+ str(self.params[i][1]) +" "+ str(self.params[i][2]) + "\n"
         

@@ -142,14 +142,16 @@ def cp_valide(lpod, carte_cp, cp_avant_tp, entrainement_atq):
             # téléportation pour l'entrainement avec défense 
             if entrainement_atq==1:
                 if i==0 and (pod[0]*len(carte_cp) + pod[1])%cp_avant_tp == cp_avant_tp - 1:
-                    lpod[3][0][2], lpod[3][0][3] = carte_cp[pod[1]][0] + parametre.placement_entrainement_defense_tp_x, carte_cp[pod[1]][1] + parametre.placement_entrainement_defense_tp_y
+                    cp_tp = (pod[1]+parametre.cp_tp)%len(carte_cp)
+                    lpod[3][0][2], lpod[3][0][3] = carte_cp[cp_tp][0] + parametre.placement_entrainement_defense_tp_x[cp_tp], carte_cp[cp_tp][1] + parametre.placement_entrainement_defense_tp_y[cp_tp]
                     lpod[3][0][4], lpod[3][0][5] = 0, 0
-                    lpod[3][0][6] = randint(-180, 180)
+                    lpod[3][0][6] = parametre.orientation_defense_tp[cp_tp]
             elif entrainement_atq==-1:
                 if i==2 and (pod[0]*len(carte_cp) + pod[1])%cp_avant_tp == cp_avant_tp - 1:
-                    lpod[1][0][2], lpod[1][0][3] = carte_cp[pod[1]][0] + parametre.placement_entrainement_defense_tp_x, carte_cp[pod[1]][1] + parametre.placement_entrainement_defense_tp_y
+                    cp_tp = (pod[1]+parametre.cp_tp)%len(carte_cp)
+                    lpod[1][0][2], lpod[1][0][3] = carte_cp[cp_tp][0] + parametre.placement_entrainement_defense_tp_x[cp_tp], carte_cp[cp_tp][1] + parametre.placement_entrainement_defense_tp_y[cp_tp]
                     lpod[1][0][4], lpod[1][0][5] = 0, 0
-                    lpod[1][0][6] = randint(-180, 180)
+                    lpod[1][0][6] = parametre.orientation_defense_tp[cp_tp]
 
         else:
             pod[7]+=1

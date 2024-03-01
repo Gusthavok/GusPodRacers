@@ -1,6 +1,7 @@
 from classe_reseau_neuronnes.network import*
 from console_et_robots.calcul_angle import*
 from math import sin, cos
+import entrainement.parametre as parametre
 
 # parametres[i][0], pod_j2_a, pod_j2_b, boost_j2, pod_j1_a, pod_j1_b, boost_j1, carte
 
@@ -18,9 +19,7 @@ def norm_vit(v):
     # bot_defense_8 : vitesse adversaire - vitesse hero
     # bot_defense_10 : position CP+1
 
-
-    
-def bot_defense_10(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
+def liste_bot_defense(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte):
     x,y = pod_b[2], pod_b[3]
     x_opp, y_opp =  pod_adversaire_a[2], pod_adversaire_a[3]
     
@@ -60,119 +59,66 @@ def bot_defense_10(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_a
         norm_ang(cp_adv_2_ang_hero)
         ]
     
+    return l
+    
+def bot_defense_10(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
 
+    l = liste_bot_defense(ntw, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte)[:10]
+    
     if len(l) != len(ntw.layer_zero):
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
     ntw.set_input(l[0:len(ntw.layer_zero)])
     ang, speed, shield = ntw.get_output()
 
-    x_dir, y_dir = x + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, y + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
+    x_dir, y_dir = pod_b[2] + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, pod_b[3] + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
 
-    if shield>0.5:
+    if shield>0.5 and parametre.shield_active_defenseur:
         return ((0, 0, 0), (x_dir, y_dir, "SHIELD"))
 
     return ((0,0,0), (x_dir, y_dir, int(100*speed)))  
     
 def bot_defense_8(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
-    x,y = pod_b[2], pod_b[3]
-    x_opp, y_opp =  pod_adversaire_a[2], pod_adversaire_a[3]
     
-    dist_opponent = norme(x_opp - x, y_opp - y)
-    ang_opponent = angle(x_opp - x, y_opp - y) - pod_b[6]
-
-    cp1x, cp1y = carte[pod_adversaire_a[1]]
-    cp_adv_1_dist_hero = norme(cp1x - x, cp1y- y)
-    cp_adv_1_ang_hero = angle(cp1x - x, cp1y- y) - pod_b[6]
-
-    vx_hero, vy_hero = pod_b[4], pod_b[5]
-    v_hero = norme(vx_hero, vy_hero)
-    ang_hero = angle(vx_hero, vy_hero) - pod_b[6]
-
-    vx_opp, vy_opp = pod_adversaire_a[4], pod_adversaire_a[5]
-    v_opp = norme(vx_opp, vy_opp)
-    ang_opp = angle(vx_opp, vy_opp) - pod_b[6]
-
-
-    l = [
-        norm_dist(dist_opponent),
-        norm_ang(ang_opponent), 
-
-        norm_dist(cp_adv_1_dist_hero),
-        norm_ang(cp_adv_1_ang_hero), 
-
-        norm_vit(v_hero),
-        norm_ang(ang_hero), 
-
-        norm_vit(v_opp),
-        norm_ang(ang_opp)
-        ]
-    
+    l = liste_bot_defense(ntw, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte)[:8]
 
     if len(l) != len(ntw.layer_zero):
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
     ntw.set_input(l[0:len(ntw.layer_zero)])
     ang, speed, shield = ntw.get_output()
 
-    x_dir, y_dir = x + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, y + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
+    x_dir, y_dir = pod_b[2] + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, pod_b[3] + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
 
-    if shield>0.5:
+    if shield>0.5 and parametre.shield_active_defenseur:
         return ((0, 0, 0), (x_dir, y_dir, "SHIELD"))
 
     return ((0,0,0), (x_dir, y_dir, int(100*speed)))  
 
 def bot_defense_4(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
-    x,y = pod_b[2], pod_b[3]
-    x_opp, y_opp =  pod_adversaire_a[2], pod_adversaire_a[3]
-    
-    dist_opponent = norme(x_opp - x, y_opp - y)
-    ang_opponent = angle(x_opp - x, y_opp - y) - pod_b[6]
-
-    cp1x, cp1y = carte[pod_adversaire_a[1]]
-    cp_adv_1_dist_hero = norme(cp1x - x, cp1y- y)
-    cp_adv_1_ang_hero = angle(cp1x - x, cp1y- y) - pod_b[6]
-
-    l = [
-        norm_dist(dist_opponent),
-        norm_ang(ang_opponent), 
-
-        norm_dist(cp_adv_1_dist_hero),
-        norm_ang(cp_adv_1_ang_hero)
-        ]
-    
+    l = liste_bot_defense(ntw, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte)[:4]
 
     if len(l) != len(ntw.layer_zero):
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
     ntw.set_input(l[0:len(ntw.layer_zero)])
     ang, speed, shield = ntw.get_output()
 
-    x_dir, y_dir = x + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, y + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
+    x_dir, y_dir = pod_b[2] + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, pod_b[3] + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
 
-    if shield>0.5:
+    if shield>0.5 and parametre.shield_active_defenseur:
         return ((0, 0, 0), (x_dir, y_dir, "SHIELD"))
 
     return ((0,0,0), (x_dir, y_dir, int(100*speed)))  
 
 def bot_defense_2(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
-    x,y = pod_b[2], pod_b[3]
-    x_opp, y_opp =  pod_adversaire_a[2], pod_adversaire_a[3]
-    
-    dist_opponent = norme(x_opp - x, y_opp - y)
-    ang_opponent = angle(x_opp - x, y_opp - y) - pod_b[6]
-
-    l = [
-        norm_dist(dist_opponent),
-        norm_ang(ang_opponent)
-        ]
-    
+    l = liste_bot_defense(ntw, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte)[:2]
 
     if len(l) != len(ntw.layer_zero):
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
     ntw.set_input(l[0:len(ntw.layer_zero)])
     ang, speed, shield = ntw.get_output()
 
-    x_dir, y_dir = x + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, y + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
+    x_dir, y_dir = pod_b[2] + cos(ang*pi/10+pod_b[6]*pi/180) * 10000, pod_b[3] + sin(ang*pi/10+pod_b[6]*pi/180) * 10000
 
-    if shield>0.5:
+    if shield>0.5 and parametre.shield_active_defenseur:
         return ((0, 0, 0), (x_dir, y_dir, "SHIELD"))
 
     return ((0,0,0), (x_dir, y_dir, int(100*speed)))
@@ -230,10 +176,15 @@ def bot_attaque_12(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_a
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
 
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
-
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
+    
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 def bot_attaque_8_bis(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False): 
 
@@ -244,10 +195,15 @@ def bot_attaque_8_bis(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, po
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
 
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
 
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 def bot_attaque_10(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
 
@@ -257,10 +213,15 @@ def bot_attaque_10(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_a
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
 
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
 
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 def bot_attaque_6_bis(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
 
@@ -271,10 +232,15 @@ def bot_attaque_6_bis(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, po
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
 
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
 
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 def bot_attaque_8(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False): 
     
@@ -284,10 +250,15 @@ def bot_attaque_8(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_ad
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
 
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
 
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 def bot_attaque_6(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False): 
     
@@ -296,12 +267,17 @@ def bot_attaque_6(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_ad
     if len(l) != len(ntw.layer_zero):
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
 
 
 
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 def bot_attaque_4(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False): 
     
@@ -310,12 +286,17 @@ def bot_attaque_4(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_ad
     if len(l) != len(ntw.layer_zero):
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
 
 
 
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 def bot_attaque_2(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False): 
     l = liste_bot_attaque(ntw, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte)[0:2]
@@ -323,12 +304,17 @@ def bot_attaque_2(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_ad
     if len(l) != len(ntw.layer_zero):
         raise ValueError("Attention, pas le bon nombre d'input donnés dans la fonction bots !")
     ntw.set_input(l[0:len(ntw.layer_zero)])
-    ang, speed= ntw.get_output()
+    ang, speed, shield = ntw.get_output()
+    
+    if parametre.shield_active_attaquant and shield>0.5:
+        pow = "SHIELD"
+    else:
+        pow = int(100*speed)
 
     x_dir, y_dir = pod_a[2] + cos(ang*pi/10+pod_a[6]*pi/180) * 10000, pod_a[3] + sin(ang*pi/10+pod_a[6]*pi/180) * 10000
-    return ((x_dir, y_dir, int(100*speed)), (0,0,0))
+    return ((x_dir, y_dir, pow), (0,0,0))
 
 # Pour ne rien faire : 
 
-def exit_bot(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte):
+def exit_bot(ntw:Reseau, pod_a, pod_b, boost_hero, pod_adversaire_a, pod_adversaire_b, boost_adversaire, carte, show = False):
     return ((0,0,0), (0,0,0))
