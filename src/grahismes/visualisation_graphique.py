@@ -32,7 +32,8 @@ class AnimationApp:
         else:
             print("Fin de la Partie")
 
-def affgame(position_CP, mouvements_pods, timing_frame = parametre.timing_frame):
+def affgame(position_CP, mouvements_pods, timing_frame = 0):
+    timing_frame = parametre.timing_frame
     static_positions = position_CP
     moving_positions = mouvements_pods  
     root = tk.Tk()

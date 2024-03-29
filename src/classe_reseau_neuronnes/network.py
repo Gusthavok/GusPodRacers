@@ -15,7 +15,7 @@ class Reseau:
         for input_name in inputs:
             self.add_input(input_name)
         
-        nb_dep = nombre_de_noeuds_intermediaire + (2 if (self.attaque==1) else 3) # deux noeuds de sortie dans le cas d'un Pod d'attaque, 3 sinon
+        nb_dep = nombre_de_noeuds_intermediaire +  3 
 
         for j in range(nb_dep):
             self.add_node(0, offset = uniform(-1,1,1)[0]*len(inputs))

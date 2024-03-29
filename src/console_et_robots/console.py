@@ -22,7 +22,7 @@ def analyse(val, bit_boost, valshield):
 # la fonction deplacement() modifie en place la case 6 = orientation de chaque pod
 # la fonction deplacement() modifie en place les cases 4 et 5 = vitesse de chaque pod
 # la fonction deplacement() modifie en place les cases 2 et 3 = position de chaque pod
-def deplacement(lpod, premierTour, boost_1, boost_2, nb_rebond):
+def deplacement(lpod, premierTour, boost_1, boost_2, nb_rebond, entrainement_atq):
     orientation = []
     nv_vx = []
     nv_vy = []
@@ -54,11 +54,23 @@ def deplacement(lpod, premierTour, boost_1, boost_2, nb_rebond):
         nv_y.append(pod[3])
 
 
-    dt = 1/parametre.nombre_de_dt
+
+    if entrainement_atq == -1:
+        proche = sqrt((nv_x[1] - nv_x[2])**2 + (nv_y[1] - nv_y[2])**2) + 600 < sqrt(((nv_vx[1] - nv_vx[2])**2 + (nv_vy[1] - nv_vy[2]))**2)
+    elif entrainement_atq == 1:
+        proche = sqrt((nv_x[0] - nv_x[3])**2 + (nv_y[0] - nv_y[3])**2) + 600 < sqrt(((nv_vx[0] - nv_vx[3])**2 + (nv_vy[0] - nv_vy[3]))**2)
+    else:
+        proche = False
+
+    if not proche:
+        dt = 1
+        ndt = 1
+    else:
+        dt = 1/parametre.nombre_de_dt
+        ndt = parametre.nombre_de_dt
 
     rebond = False
-
-    for loop in range(parametre.nombre_de_dt):
+    for _ in range(ndt):
         for i in range(4):
             nv_x[i] += nv_vx[i] * dt
             nv_y[i] += nv_vy[i] * dt
@@ -114,6 +126,7 @@ def deplacement(lpod, premierTour, boost_1, boost_2, nb_rebond):
 
                         nv_x[i] += nv_vx[i] * dt
                         nv_y[i] += nv_vy[i] * dt
+
     
     for indice, (pod, decision) in enumerate(lpod):
         pod[6] = orientation[indice]
@@ -214,7 +227,7 @@ def jeu(carte_cp, nb_tour, reponse_j1, reponse_j2, parametres, nombre_de_course 
                 # la fonction deplacement() modifie en place les cases 4 et 5 = vitesse de chaque pod
                 # la fonction deplacement() modifie en place les cases 2 et 3 = position de chaque pod
 
-                boost_j1, boost_j2, nb_rebond[i] = deplacement(lpod, premier_tour, boost_j1, boost_j2, nb_rebond[i]) 
+                boost_j1, boost_j2, nb_rebond[i] = deplacement(lpod, premier_tour, boost_j1, boost_j2, nb_rebond[i], entrainement_attaque) 
 
 
                 cp_valide(lpod, carte_cp, cp_avant_teleportation, entrainement_attaque) # modifie en place les cases 0 (nb de tour) 1 (prochain cp) et 7 (nb de tour sans passer de cp) de chaque pod
