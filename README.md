@@ -9,7 +9,7 @@ Some bugs were reported on Linux environment, you should execute this code with 
   
 ## Objectives :  
 Getting strond podracers for MadPodRacing (a CodinGame challenge).  
-Actually the algorithm is using natural selction, but a dqn version will sonn be released.  
+Actually the algorithm is using natural selction, but a dqn version will soon be released.  
   
 ## Running the algorithm :  
 Run the file src/evolution.py  
